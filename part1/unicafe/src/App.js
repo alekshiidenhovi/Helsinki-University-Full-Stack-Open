@@ -2,13 +2,21 @@ import React, { useState } from 'react'
 
 const Button = ({ handleClick, text }) => <button onClick={handleClick}>{text}</button>
 
-const Statistic = ({ text, stat }) => <p>{text} {stat}</p>
+const Statistics = ({ text, stat, addPercent = false }) => {
+  let percent = ""
+  if (addPercent) percent = " %"
+  return <p>{text} {stat}{percent}</p>
+} 
 
 const App = () => {
   // save clicks of each button to its own state
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
+
+  const all = good + neutral + bad
+  const avg = (good - bad) / all
+  const positive = good / all
 
   return (
 
@@ -25,9 +33,12 @@ const App = () => {
         <h1>statistics</h1>
       </div>
       <div>
-        <Statistic text="good" stat={good} />
-        <Statistic text="neutral" stat={neutral} />
-        <Statistic text="bad" stat={bad} />
+        <Statistics text="good" stat={good} />
+        <Statistics text="neutral" stat={neutral} />
+        <Statistics text="bad" stat={bad} />
+        <Statistics text="all" stat={all} />
+        <Statistics text="average" stat={avg} />
+        <Statistics text="positive" stat={100*positive} addPercent={true} />
       </div>
     </div>
   )
