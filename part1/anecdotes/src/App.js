@@ -6,6 +6,16 @@ const Button = ({handleClick, text}) => {
   )
 }
 
+const MostVoted = ({anecdotes, votes, index}) => {
+  if (votes.reduce((sum, i) => sum + votes[i]) === 0) return <div>No votes yet</div>
+  return (
+    <div>
+      {anecdotes[index]}<br/>
+      has {votes[index]} votes
+    </div>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often',
@@ -24,6 +34,8 @@ const App = () => {
   // State and state functions
   const [selected, setSelected] = useState(rand())
   const [votes, setVotes] = useState(Array(n).fill(0))
+  const mostVotes = Math.max.apply(null, votes)
+  const index = votes.indexOf(mostVotes)
 
   // Helper function to handle voting
   const handleVote = () => {
@@ -34,12 +46,16 @@ const App = () => {
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       {anecdotes[selected]}<br/>
       has {votes[selected]} votes
       <div>
         <Button handleClick={() => handleVote()} text="vote" />
         <Button handleClick={() => setSelected(rand())} text="next anecdote" />
       </div>
+
+      <h1>Anecdote with most votes</h1>
+      <MostVoted anecdotes={anecdotes} votes={votes} index={index} />
     </div>
   )
 }
