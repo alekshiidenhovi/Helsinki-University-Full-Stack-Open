@@ -1,0 +1,4 @@
+Single page app POST
+
+1. browser-->server HTTP POST request to "https://studies.cs.helsinki.fi/exampleapp/new_note_spa" (json data)
+2. server-->browser HTTP status 201

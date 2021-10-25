@@ -1,0 +1,11 @@
+HTTP POST
+
+1. browser-->server: HTTP POST request to "studies.cs.helsinki.fi/exampleapp/new_note".
+2. server-->browser: server responds with HTTP status code 302, an URL redirect
+
+3. browser-->server: HTTP GET request to "studies.cs.helsinki.fi/exampleapp/notes"
+4. server-->browser: HTML-code
+
+5. browser-->server: HTTP GET request to a) "studies.cs.helsinki.fi/exampleapp/main.css",
+b) "studies.cs.helsinki.fi/exampleapp/main.js", c) "studies.cs.helsinki.fi/exampleapp/data.json"
+6. server-->browser: sends main.css, main.js, data.json

@@ -1,0 +1,8 @@
+Entering single page app
+
+1. browser-->server HTTP GET request to "https://studies.cs.helsinki.fi/exampleapp/spa"
+2. server-->browser html-code
+
+3. browser-->server HTTP GET requests to a) "https://studies.cs.helsinki.fi/exampleapp/main.css",
+b) "https://studies.cs.helsinki.fi/exampleapp/spa.js", c) "https://studies.cs.helsinki.fi/exampleapp/data.json
+4. server-->browser sends back main.css, spa.js, data.json
