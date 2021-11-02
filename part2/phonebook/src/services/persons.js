@@ -11,10 +11,12 @@ const get = () => {
   return getData(request)
 }
 
-const create = (newObject) => {
+const create = newObject => {
   const request = axios.post(baseUrl, newObject)
   return getData(request)
 }
 
-const functions = { get, create }
+const remove = id => axios.delete(`${baseUrl}/${id}`)
+
+const functions = { get, create, remove }
 export default functions

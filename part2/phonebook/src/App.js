@@ -35,6 +35,15 @@ const App = () => {
     }
   }
 
+  const removeName = id => {
+    const person = persons.find(person => person.id === id)
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+      .remove(id)
+      .then(setPersons(persons.filter(person => person.id !== id)))
+    }
+  }
+
   const personsToShow = input => persons.filter(person => person.name.toLowerCase().startsWith(input.toLowerCase()))
 
   return (
@@ -48,7 +57,7 @@ const App = () => {
         <div><button type="submit">add</button></div>
       </form>
       <h2>Numbers</h2>
-      {personsToShow(newFilter).map(person => <Person key={person.id} person={person} />)}
+      {personsToShow(newFilter).map(person => <Person key={person.id} person={person} removeName={removeName} />)}
     </div>
   )
 }

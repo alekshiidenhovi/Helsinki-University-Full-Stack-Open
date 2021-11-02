@@ -1,11 +1,6 @@
 {
   "persons": [
     {
-      "name": "Arto Hellas",
-      "number": "040-123456",
-      "id": 1
-    },
-    {
       "name": "Ada Lovelace",
       "number": "39-44-5323523",
       "id": 2
@@ -21,21 +16,6 @@
       "id": 4
     },
     {
-      "name": "arto hellas",
-      "number": "",
-      "id": 5
-    },
-    {
-      "name": "Aleks",
-      "number": "",
-      "id": 6
-    },
-    {
-      "name": "Aleksi",
-      "number": "",
-      "id": 7
-    },
-    {
       "name": "David Attenborough",
       "number": "0402323023",
       "id": 8
@@ -44,16 +24,6 @@
       "name": "jouni",
       "number": "",
       "id": 9
-    },
-    {
-      "name": "jake",
-      "number": "",
-      "id": 10
-    },
-    {
-      "name": "",
-      "number": "",
-      "id": 11
     },
     {
       "name": "ale",
@@ -74,6 +44,11 @@
       "name": "uusin",
       "number": "23023",
       "id": 15
+    },
+    {
+      "name": "aleks",
+      "number": "",
+      "id": 16
     }
   ]
 }
