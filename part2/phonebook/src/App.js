@@ -23,16 +23,26 @@ const App = () => {
     }
 
     if (persons.some(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+      if (window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
+        // Update name
+        const oldPerson = persons.find(person => person.name === newName)
+        personService
+        .update(oldPerson.id, nameObject)
+        .then(returnedPerson => setPersons(persons.map(person => {
+          return person.name === newName ? returnedPerson : person
+        })))
+      }
     } else {
+      // Create a new name
       personService
       .create(nameObject)
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
-        setNewName("")
-        setNewNumber("")
       })
     }
+    // Reset name and number fields
+    setNewName("")
+    setNewNumber("")
   }
 
   const removeName = id => {
