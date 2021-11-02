@@ -5,7 +5,7 @@ import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
 
 const App = () => {
-  const [persons, setPersons] = useState([])
+  const [ persons, setPersons ] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newFilter, setNewFilter ] = useState('')
@@ -30,15 +30,18 @@ const App = () => {
     const nameObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1
     }
 
     if (persons.some(person => person.name === newName)) {
       alert(`${newName} is already added to phonebook`)
     } else {
-      setPersons(persons.concat(nameObject))
-      setNewName("")
-      setNewNumber("")
+      axios
+      .post(`http://localhost:3001/persons`, nameObject)
+      .then(request => {
+        setPersons(persons.concat(request.data))
+        setNewName("")
+        setNewNumber("")
+      })
     }
   }
 
