@@ -1,0 +1,16 @@
+.message {
+  background: lightgrey;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.success {
+  color: hsl(130, 100%, 28%);
+}
+
+.failure {
+  color: hsl(0, 96%, 44%);
+}

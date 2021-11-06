@@ -1,19 +1,33 @@
 import React, { useState, useEffect } from 'react'
 import Filter from "./components/Filter"
 import Person from "./components/Person"
+import Message from "./components/Message"
 import personService from "./services/persons"
+
 
 const App = () => {
   const [ persons, setPersons ] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newFilter, setNewFilter ] = useState('')
+  const [ messageType, setMessageType ] = useState(null)
+  const [ message, setMessage ] = useState('')
 
   useEffect(() => {
     personService
     .get()
     .then(setPersons)
   }, [])
+
+  const sendMessage = (type, message) => {
+    if (type === null) {
+      return 
+    } else {
+      setMessageType('success')
+      setMessage(message)
+      setTimeout(() => setMessageType(null), 5000)
+    }
+  }
 
   const addName = event => {
     event.preventDefault()
@@ -29,6 +43,7 @@ const App = () => {
         personService
         .update(oldPerson.id, nameObject)
         .then(returnedPerson => setPersons(persons.map(person => {
+          sendMessage('success', `Replaced ${oldPerson.name} with ${newName}`)
           return person.name === newName ? returnedPerson : person
         })))
       }
@@ -37,6 +52,7 @@ const App = () => {
       personService
       .create(nameObject)
       .then(returnedPerson => {
+        sendMessage('success', `Added ${returnedPerson.name}`)
         setPersons(persons.concat(returnedPerson))
       })
     }
@@ -59,6 +75,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Message type={messageType} message={message} />
       <Filter filter={newFilter} updateFilter={(event) => setNewFilter(event.target.value)} />
       <h2>Add a new</h2>
       <form onSubmit={addName}>
