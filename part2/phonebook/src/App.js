@@ -23,10 +23,15 @@ const App = () => {
     if (type === null) {
       return 
     } else {
-      setMessageType('success')
+      setMessageType(type)
       setMessage(message)
       setTimeout(() => setMessageType(null), 5000)
     }
+  }
+
+  const sendError = (name, deletedPerson) => {
+    sendMessage('failure', `Information of ${name} has already been removed from the server`)
+    setPersons(persons.filter(person => person.name !== deletedPerson.name))
   }
 
   const addName = event => {
@@ -46,6 +51,7 @@ const App = () => {
           sendMessage('success', `Replaced ${oldPerson.name} with ${newName}`)
           return person.name === newName ? returnedPerson : person
         })))
+        .catch(error => sendError(newName, nameObject))
       }
     } else {
       // Create a new name
@@ -66,7 +72,11 @@ const App = () => {
     if (window.confirm(`Delete ${person.name}?`)) {
       personService
       .remove(id)
-      .then(setPersons(persons.filter(person => person.id !== id)))
+      .then(() => {
+        sendMessage('success', `Removed ${person.name}`)
+        setPersons(persons.filter(person => person.id !== id))
+      })
+      .catch(error => sendError(person.name, person))
     }
   }
 

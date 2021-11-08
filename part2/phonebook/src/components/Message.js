@@ -7,7 +7,11 @@ const Message = ({ type, message }) => {
     return (
       <div className="message success">{message}</div>
     )
-  }
+  } else {
+    return (
+      <div className="message failure">{message}</div>
+    )
+  } 
 }
 
 export default Message
