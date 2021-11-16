@@ -52,7 +52,8 @@ const blogs = [
   }  
 ]
 
-const firstBlog = blogs.slice(0, 1)
+const oneBlog = blogs.slice(0, 1)
+const firstBlogger = oneBlog[0]
 
 test('Dummy returns one', () => {
   const blogs = []
@@ -67,7 +68,7 @@ describe('Total likes', () => {
   })
 
   test('when list has only one blog, equals the likes of that', () => {
-    const result = listHelper.totalLikes(firstBlog)
+    const result = listHelper.totalLikes(oneBlog)
     expect(result).toBe(7)
   })
 
@@ -86,8 +87,8 @@ describe('Favorite blog', () => {
   })
 
   test('when list has only one blog, is the blog itself', () => {
-    const favoriteBlog = omit(firstBlog[0], omittedFields)
-    const result = listHelper.favoriteBlog(firstBlog)
+    const favoriteBlog = omit(firstBlogger, omittedFields)
+    const result = listHelper.favoriteBlog(oneBlog)
     expect(result).toEqual(favoriteBlog)
   })
 
@@ -108,8 +109,8 @@ describe('The author of most blogs', () => {
   })
 
   test('when list has only one entry, is that author and one blog', () => {
-    const result = listHelper.mostBlogs(firstBlog)
-    const actual = omit(firstBlog[0], omittedFields)
+    const result = listHelper.mostBlogs(oneBlog)
+    const actual = omit(firstBlogger, omittedFields)
     actual.blogs = 1
     expect(result).toEqual(actual)
   })
@@ -118,6 +119,29 @@ describe('The author of most blogs', () => {
     const result = listHelper.mostBlogs(blogs)
     const actual = omit(blogs[4], omittedFields)
     actual.blogs = 3
+    expect(result).toEqual(actual)
+  })
+})
+
+describe('The author with most likes', () => {
+  const omittedFields = ['_id', '__v', 'title', 'url']
+
+  test('when list is empty is undefined', () => {
+    const result = listHelper.mostLikes([])
+    expect(result).toEqual({ author: undefined, likes: 0 })
+  })
+
+  test('when list has only one entry, is the one author on the list and his likes', () => {
+    const result = listHelper.mostLikes(oneBlog)
+    const actual = omit(firstBlogger, omittedFields)
+    actual.likes = firstBlogger.likes
+    expect(result).toEqual(actual)
+  })
+
+  test('when there are multiple entries, is calculated correctly', () => {
+    const result = listHelper.mostLikes(blogs)
+    const actual = omit(blogs[1], omittedFields)
+    actual.likes = 17
     expect(result).toEqual(actual)
   })
 })

@@ -1,3 +1,5 @@
+const logger = require('./logger');
+
 const dummy = blogs => 1
 
 const totalLikes = blogs => {
@@ -41,7 +43,7 @@ const mostBlogs = blogs => {
   let mostBlogs = 0
 
   for (const [author, blogs] of blogAmount) {
-    if (blogs > mostBlogs) {
+    if (blogs >= mostBlogs) {
       winningAuthor = author
       mostBlogs = blogs
     } 
@@ -53,4 +55,32 @@ const mostBlogs = blogs => {
   }
 }
 
-module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs }
+const mostLikes = blogs => {
+  const likeAmount = new Map()
+
+  blogs.forEach((blog) => {
+    const author = blog.author
+    if (likeAmount.has(author)) {
+      likeAmount.set(author, likeAmount.get(author) + blog.likes)
+    } else {
+      likeAmount.set(author, blog.likes)
+    }
+  })
+
+  let winningAuthor = undefined
+  let mostLikes = 0
+
+  for (const [author, likes] of likeAmount) {
+    if (likes >= mostLikes) {
+      winningAuthor = author
+      mostLikes = likes
+    } 
+  }
+
+  return { 
+    author: winningAuthor, 
+    likes: mostLikes
+  }
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes }
