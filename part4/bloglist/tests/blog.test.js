@@ -1,4 +1,5 @@
 const listHelper = require('../utils/list_helper')
+const omit = require('lodash/omit')
 
 const blogs = [
   {
@@ -55,7 +56,6 @@ const firstBlog = blogs.slice(0, 1)
 
 test('Dummy returns one', () => {
   const blogs = []
-
   const result = listHelper.dummy(blogs)
   expect(result).toBe(1)
 })
@@ -78,21 +78,46 @@ describe('Total likes', () => {
 })
 
 describe('Favorite blog', () => {
+  const omittedFields = ['_id', '__v', 'url']
+
   test('of empty list is null', () => {
     const result = listHelper.favoriteBlog([])
     expect(result).toBe(null)
   })
 
   test('when list has only one blog, is the blog itself', () => {
-    const favoriteBlog = blogs[0]
+    const favoriteBlog = omit(firstBlog[0], omittedFields)
     const result = listHelper.favoriteBlog(firstBlog)
     expect(result).toEqual(favoriteBlog)
   })
 
   test('of a bigger list is calculated right', () => {
-    const actualFavorite = blogs[2]
+    const actualFavorite = omit(blogs[2], omittedFields)
     const result = listHelper.favoriteBlog(blogs)
 
     expect(result).toEqual(actualFavorite)
+  })
+})
+
+describe('The author of most blogs', () => {
+  const omittedFields = ['_id', 'title', 'url', 'likes', '__v']
+
+  test('when list is empty is undefined', () => {
+    const result = listHelper.mostBlogs([])
+    expect(result).toEqual({ author: undefined, blogs: 0 })
+  })
+
+  test('when list has only one entry, is that author and one blog', () => {
+    const result = listHelper.mostBlogs(firstBlog)
+    const actual = omit(firstBlog[0], omittedFields)
+    actual.blogs = 1
+    expect(result).toEqual(actual)
+  })
+
+  test('when list has multiple entries, correct object is returned', () => {
+    const result = listHelper.mostBlogs(blogs)
+    const actual = omit(blogs[4], omittedFields)
+    actual.blogs = 3
+    expect(result).toEqual(actual)
   })
 })
