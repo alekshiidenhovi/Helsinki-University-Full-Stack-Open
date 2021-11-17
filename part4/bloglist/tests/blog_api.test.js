@@ -36,9 +36,9 @@ test('Unique identifier is id instead of _id', async () => {
 
 test('New blog is posted successfully', async () => {
   const newBlog = {
-    title: "New blog",
-    author: "New author",
-    url: "www.newblog.com",
+    title: "First blog",
+    author: "First author",
+    url: "www.firstblog.com",
     likes: 2
   }
 
@@ -52,6 +52,29 @@ test('New blog is posted successfully', async () => {
   const processedBlogs = blogsEnd.map(blog => omit(blog, ["id"]))
 
   expect(processedBlogs).toHaveLength(helper.initialBlogs.length + 1)
+  expect(processedBlogs).toContainEqual(newBlog)
+})
+
+test('Likes default to zero', async () => {
+  const newBlog = {
+    title: "Second blog",
+    author: "Second author",
+    url: "www.secondblog.com"
+  }
+
+  await api
+  .post('/api/blogs')
+  .send(newBlog)
+  .expect(201)
+  .expect('Content-Type', /application\/json/)
+
+  const blogsEnd = await helper.blogsInDb()
+  const processedBlogs = blogsEnd.map(blog => omit(blog, ["id"]))
+
+  expect(processedBlogs).toHaveLength(helper.initialBlogs.length + 1)
+
+  expect(processedBlogs).not.toContainEqual(newBlog)
+  newBlog.likes = 0
   expect(processedBlogs).toContainEqual(newBlog)
 })
 
