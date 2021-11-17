@@ -78,4 +78,26 @@ test('Likes default to zero', async () => {
   expect(processedBlogs).toContainEqual(newBlog)
 })
 
+test('Returns status code 400 if POST-request is missing title and url properties', async () => {
+  const firstBlog = { author: "Third author", likes: 4 }
+  await api
+  .post('/api/blogs')
+  .send(firstBlog)
+  .expect(400)
+
+  const secondBlog = {...firstBlog, title: "Third blog"}
+  await api
+  .post('/api/blogs')
+  .send(secondBlog)
+  .expect(201)
+  .expect('Content-Type', /application\/json/)
+
+  const thirdBlog = {...firstBlog, url: "www.thirdblog.com"}
+  await api
+  .post('/api/blogs')
+  .send(thirdBlog)
+  .expect(201)
+  .expect('Content-Type', /application\/json/)
+})
+
 afterAll(() => mongoose.connection.close())
