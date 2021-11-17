@@ -30,7 +30,7 @@ describe('Total likes', () => {
 })
 
 describe('Favorite blog', () => {
-  const omittedFields = ['_id', '__v', 'url']
+  const omittedFields = ['id', 'url']
 
   test('of empty list is null', () => {
     const result = listHelper.favoriteBlog([])
@@ -52,7 +52,7 @@ describe('Favorite blog', () => {
 })
 
 describe('The author of most blogs', () => {
-  const omittedFields = ['_id', 'title', 'url', 'likes', '__v']
+  const omittedFields = ['id', 'title', 'url', 'likes']
 
   test('when list is empty is undefined', () => {
     const result = listHelper.mostBlogs([])
@@ -75,7 +75,7 @@ describe('The author of most blogs', () => {
 })
 
 describe('The author with most likes', () => {
-  const omittedFields = ['_id', '__v', 'title', 'url']
+  const omittedFields = ['id', 'title', 'url']
 
   test('when list is empty is undefined', () => {
     const result = listHelper.mostLikes([])
