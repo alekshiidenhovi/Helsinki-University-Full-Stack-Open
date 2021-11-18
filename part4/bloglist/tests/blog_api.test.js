@@ -105,7 +105,7 @@ describe('POST-request tests:', () => {
 })
 
 describe('DELETE-request tests:', () => {
-  test('Post is deleted successfully', async () => {
+  test('Blog is deleted successfully', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blog = blogsAtStart[0]
 
@@ -120,5 +120,25 @@ describe('DELETE-request tests:', () => {
   })
 })
 
+describe('PATCH-request tests:', () => {
+  test('Blog is updated successfully', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const updatedLikes = 77
+    const blog = {
+      likes: updatedLikes,
+    }
+
+    await api
+    .patch(`/api/blogs/${blogsAtStart[0].id}`)
+    .send(blog)
+    .expect(200)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
+
+    const likes = blogsAtEnd.map(blog => blog.likes)
+    expect(likes).toContain(updatedLikes)
+  })
+})
 
 afterAll(() => mongoose.connection.close())
