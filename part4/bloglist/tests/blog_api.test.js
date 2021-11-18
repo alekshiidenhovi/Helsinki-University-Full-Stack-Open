@@ -16,88 +16,109 @@ beforeEach(async () => {
   await Promise.all(promiseArray)
 })
 
-test('Blogs returned successfully as json', async () => {
-  await api.get('/api/blogs')
-  .expect(200)
-  .expect('Content-Type', /application\/json/)
+describe('GET-request tests:', () => {
+  test('Blogs returned successfully as json', async () => {
+    await api.get('/api/blogs')
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+  })
+  
+  test('Correct amount of blogs returned', async () => {
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
+  })
+  
+  test('Unique identifier is id instead of _id', async () => {
+    const response = await api.get('/api/blogs')
+  
+    expect(response.body[0].id).toBeDefined()
+    expect(response.body[0]._id).not.toBeDefined()
+  })
 })
 
-test('Correct amount of blogs returned', async () => {
-  const response = await api.get('/api/blogs')
-  expect(response.body).toHaveLength(helper.initialBlogs.length)
+describe('POST-request tests:', () => {
+  test('New blog is posted successfully', async () => {
+    const newBlog = {
+      title: "First blog",
+      author: "First author",
+      url: "www.firstblog.com",
+      likes: 2
+    }
+  
+    await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  
+    const blogsEnd = await helper.blogsInDb()
+    const processedBlogs = blogsEnd.map(blog => omit(blog, ["id"]))
+  
+    expect(processedBlogs).toHaveLength(helper.initialBlogs.length + 1)
+    expect(processedBlogs).toContainEqual(newBlog)
+  })
+  
+  test('Likes default to zero', async () => {
+    const newBlog = {
+      title: "Second blog",
+      author: "Second author",
+      url: "www.secondblog.com"
+    }
+  
+    await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  
+    const blogsEnd = await helper.blogsInDb()
+    const processedBlogs = blogsEnd.map(blog => omit(blog, ["id"]))
+  
+    expect(processedBlogs).toHaveLength(helper.initialBlogs.length + 1)
+  
+    expect(processedBlogs).not.toContainEqual(newBlog)
+    newBlog.likes = 0
+    expect(processedBlogs).toContainEqual(newBlog)
+  })
+  
+  test('Returns status code 400 if POST-request is missing title and url properties', async () => {
+    const firstBlog = { author: "Third author", likes: 4 }
+    await api
+    .post('/api/blogs')
+    .send(firstBlog)
+    .expect(400)
+  
+    const secondBlog = {...firstBlog, title: "Third blog"}
+    await api
+    .post('/api/blogs')
+    .send(secondBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  
+    const thirdBlog = {...firstBlog, url: "www.thirdblog.com"}
+    await api
+    .post('/api/blogs')
+    .send(thirdBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  })
 })
 
-test('Unique identifier is id instead of _id', async () => {
-  const response = await api.get('/api/blogs')
+describe('DELETE-request tests:', () => {
+  test('Post is deleted successfully', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blog = blogsAtStart[0]
 
-  expect(response.body[0].id).toBeDefined()
-  expect(response.body[0]._id).not.toBeDefined()
+    await api
+    .delete(`/api/blogs/${blog.id}`)
+    .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
+    
+    expect(blogsAtEnd).not.toContainEqual(blog)
+  })
 })
 
-test('New blog is posted successfully', async () => {
-  const newBlog = {
-    title: "First blog",
-    author: "First author",
-    url: "www.firstblog.com",
-    likes: 2
-  }
-
-  await api
-  .post('/api/blogs')
-  .send(newBlog)
-  .expect(201)
-  .expect('Content-Type', /application\/json/)
-
-  const blogsEnd = await helper.blogsInDb()
-  const processedBlogs = blogsEnd.map(blog => omit(blog, ["id"]))
-
-  expect(processedBlogs).toHaveLength(helper.initialBlogs.length + 1)
-  expect(processedBlogs).toContainEqual(newBlog)
-})
-
-test('Likes default to zero', async () => {
-  const newBlog = {
-    title: "Second blog",
-    author: "Second author",
-    url: "www.secondblog.com"
-  }
-
-  await api
-  .post('/api/blogs')
-  .send(newBlog)
-  .expect(201)
-  .expect('Content-Type', /application\/json/)
-
-  const blogsEnd = await helper.blogsInDb()
-  const processedBlogs = blogsEnd.map(blog => omit(blog, ["id"]))
-
-  expect(processedBlogs).toHaveLength(helper.initialBlogs.length + 1)
-
-  expect(processedBlogs).not.toContainEqual(newBlog)
-  newBlog.likes = 0
-  expect(processedBlogs).toContainEqual(newBlog)
-})
-
-test('Returns status code 400 if POST-request is missing title and url properties', async () => {
-  const firstBlog = { author: "Third author", likes: 4 }
-  await api
-  .post('/api/blogs')
-  .send(firstBlog)
-  .expect(400)
-
-  const secondBlog = {...firstBlog, title: "Third blog"}
-  await api
-  .post('/api/blogs')
-  .send(secondBlog)
-  .expect(201)
-  .expect('Content-Type', /application\/json/)
-
-  const thirdBlog = {...firstBlog, url: "www.thirdblog.com"}
-  await api
-  .post('/api/blogs')
-  .send(thirdBlog)
-  .expect(201)
-  .expect('Content-Type', /application\/json/)
-})
 
 afterAll(() => mongoose.connection.close())
