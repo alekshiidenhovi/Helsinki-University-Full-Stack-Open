@@ -153,7 +153,7 @@ describe('User-tests: when there is initially one user in db', () => {
     await user.save()
   })
 
-  test('creation succeeds with a fresh username', async () => {
+  test('Creation succeeds with a fresh username', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
@@ -173,6 +173,48 @@ describe('User-tests: when there is initially one user in db', () => {
 
     const usernames = usersAtEnd.map(u => u.username)
     expect(usernames).toContain(newUser.username)
+  })
+
+  describe('Invalid usernames are not added to the database', () => {
+    const userTest = async (user) => {
+      const usersAtStart = await helper.usersInDb()
+  
+      await api
+      .post('/api/users')
+      .send(user)
+      .expect(400)
+  
+      const usersAtEnd = await helper.usersInDb()
+  
+      expect(usersAtEnd).toHaveLength(usersAtStart.length)
+      expect(usersAtEnd).not.toContainEqual(user)
+    }
+
+    test('Username too short', async () => {
+      const user = {
+        username: "SU",
+        name: "Short Username",
+        password: "passwordlongenough"
+      }
+      await userTest(user)
+    })
+  
+    test('Password too short', async () => {
+      const user = {
+        username: "tooshort",
+        name: "Short Password",
+        password: "sh"
+      }
+      await userTest(user)
+    })
+  
+    test('Password missing', async () => {
+      const user = {
+        username: "missing",
+        name: "Missing Password"
+      }
+      await userTest(user)
+    })
   })
 })
 
