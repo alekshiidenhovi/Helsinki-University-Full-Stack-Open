@@ -1,11 +1,10 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const helper = require('../tests/test_helper')
-const jwt = require('jsonwebtoken')
+const middleware = require('../utils/middleware')
 
-const checkToken = (token, decodedToken) => {
-  if (!token || !decodedToken.id) {
+const checkToken = (token, user) => {
+  if (!token || !user) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
 }
@@ -15,43 +14,39 @@ blogRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-blogRouter.post('/', async (request, response) => {
-  const {body, token} = request
-  const decodedToken = jwt.verify(token, process.env.SECRET)
-
-  checkToken(token, decodedToken)
-
-  const user = await User.findById(decodedToken.id)
+blogRouter.post('/', middleware.userExtractor, async (request, response) => {
+  const {body, token, user} = request
+  const userId = user._id.toString()
   const blog = new Blog({
     ...body,
-    user: user._id,
+    user: userId,
     likes: body.likes || 0
   })
+
+  checkToken(token, user)
 
   if (blog.title || blog.url) {
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog)
-    await User.findByIdAndUpdate(user._id, user)
+    await User.findByIdAndUpdate(userId, user)
+
     response.status(201).json(savedBlog)
   } else {
     response.status(400).json({ error: "Title and url missing" })
   }
 })
 
-blogRouter.delete('/:id', async (request, response) => {
-  const {token} = request
+blogRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
+  const {token, user} = request
+  const userId = user._id.toString()
   const blogId = request.params.id
-  const decodedToken = jwt.verify(token, process.env.SECRET)
-  const userId = decodedToken.id
-
-  checkToken(token, decodedToken)
-
   const blog = await Blog.findById(blogId)
+
+  checkToken(token, user)
 
   if (blog.user.toString() === userId.toString()) {
     await Blog.findByIdAndRemove(blogId)
 
-    const user = await User.findById(userId)
     user.blogs = user.blogs.filter(b => b.toString() !== blog._id.toString())
     await User.findByIdAndUpdate(userId, user)
 
@@ -59,8 +54,6 @@ blogRouter.delete('/:id', async (request, response) => {
   } else {
     response.status(401).json({ error: "This user cannot delete this blog" })
   }
-
-  
 })
 
 blogRouter.patch('/:id', async (request, response) => {
