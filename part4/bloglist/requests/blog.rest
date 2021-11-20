@@ -6,8 +6,8 @@ Content-Type: application/json
 Authorization:  bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3QiLCJpZCI6IjYxOTkxMTI0ZGE0NDhjMWU3YjkwZDhiMyIsImlhdCI6MTYzNzQyNTYxNSwiZXhwIjoxNjM3NDI5MjE1fQ.kYlUtSsqLSME7sNGdX_Qq8AWDiQ-3Ab6_1JSu4P8o1U
 
 {
-  "title": "Test 3",
-  "author": "Test author 3",
+  "title": "Test 5",
+  "author": "Test author 5",
   "likes": 3,
-  "url": "www.test3.com"
+  "url": "www.test5.com"
 }
