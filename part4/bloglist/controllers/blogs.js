@@ -3,8 +3,8 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const middleware = require('../utils/middleware')
 
-const checkToken = (token, user) => {
-  if (!token || !user) {
+const checkToken = (token, user, response) => {
+  if (!token || !user.username) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
 }
@@ -16,14 +16,14 @@ blogRouter.get('/', async (request, response) => {
 
 blogRouter.post('/', middleware.userExtractor, async (request, response) => {
   const {body, token, user} = request
+  checkToken(token, user, response)
+
   const userId = user._id.toString()
   const blog = new Blog({
     ...body,
     user: userId,
     likes: body.likes || 0
   })
-
-  checkToken(token, user)
 
   if (blog.title || blog.url) {
     const savedBlog = await blog.save()
@@ -38,11 +38,11 @@ blogRouter.post('/', middleware.userExtractor, async (request, response) => {
 
 blogRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
   const {token, user} = request
+  checkToken(token, user, response)
+
   const userId = user._id.toString()
   const blogId = request.params.id
   const blog = await Blog.findById(blogId)
-
-  checkToken(token, user)
 
   if (blog.user.toString() === userId.toString()) {
     await Blog.findByIdAndRemove(blogId)

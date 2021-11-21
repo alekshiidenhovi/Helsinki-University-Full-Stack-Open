@@ -5,17 +5,37 @@ const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const bcrypt = require('bcrypt')
 const omit = require('lodash/omit')
+const jwt = require('jsonwebtoken')
 
-// Initialize database
+let token
+let loggedUser
 beforeEach(async () => {
+  // Init users
+  await User.deleteMany({})
+  const user = await helper.initUser()
+  await user.save()
+
+  // Init blogs
   await Blog.deleteMany({})
 
-  const blogs = helper.initialBlogs.map(blog => new Blog(blog))
-  const promiseArray = blogs.map(blog => blog.save())
+  const blogs = helper.initialBlogs
+  blogs.forEach(blog => blog.user = user._id)
 
+  const promiseArray = blogs.map(blog => new Blog(blog)).map(blog => blog.save())
   await Promise.all(promiseArray)
+
+  // Init login and get token
+  const userForToken = { username: user.username, id: user._id }
+
+  const tokenString = jwt.sign(
+    userForToken, 
+    process.env.SECRET,
+    { expiresIn: 60*60 }
+  )
+
+  token = `bearer ${tokenString}`
+  loggedUser = user
 })
 
 describe('GET-request tests:', () => {
@@ -49,15 +69,30 @@ describe('POST-request tests:', () => {
   
     await api
     .post('/api/blogs')
+    .set('Authorization', token)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
   
     const blogsEnd = await helper.blogsInDb()
-    const processedBlogs = blogsEnd.map(blog => omit(blog, ["id"]))
+    const processedBlogs = blogsEnd.map(blog => omit(blog, ["id", "user"]))
   
     expect(processedBlogs).toHaveLength(helper.initialBlogs.length + 1)
     expect(processedBlogs).toContainEqual(newBlog)
+  })
+
+  test('New blog is not posted when no token is provided', async () => {
+    const newBlog = {
+      title: "First blog",
+      author: "First author",
+      url: "www.firstblog.com",
+      likes: 2
+    }
+  
+    await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(401)
   })
   
   test('Likes default to zero', async () => {
@@ -69,12 +104,13 @@ describe('POST-request tests:', () => {
   
     await api
     .post('/api/blogs')
+    .set('Authorization', token)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
   
     const blogsEnd = await helper.blogsInDb()
-    const processedBlogs = blogsEnd.map(blog => omit(blog, ["id"]))
+    const processedBlogs = blogsEnd.map(blog => omit(blog, ["id", "user"]))
   
     expect(processedBlogs).toHaveLength(helper.initialBlogs.length + 1)
   
@@ -87,12 +123,14 @@ describe('POST-request tests:', () => {
     const firstBlog = { author: "Third author", likes: 4 }
     await api
     .post('/api/blogs')
+    .set('Authorization', token)
     .send(firstBlog)
     .expect(400)
   
     const secondBlog = {...firstBlog, title: "Third blog"}
     await api
     .post('/api/blogs')
+    .set('Authorization', token)
     .send(secondBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -100,6 +138,7 @@ describe('POST-request tests:', () => {
     const thirdBlog = {...firstBlog, url: "www.thirdblog.com"}
     await api
     .post('/api/blogs')
+    .set('Authorization', token)
     .send(thirdBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -113,6 +152,7 @@ describe('DELETE-request tests:', () => {
 
     await api
     .delete(`/api/blogs/${blog.id}`)
+    .set('Authorization', token)
     .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
@@ -144,14 +184,14 @@ describe('PATCH-request tests:', () => {
 })
 
 describe('User-tests: when there is initially one user in db', () => {
-  beforeEach(async () => {
-    await User.deleteMany({})
+  // beforeEach(async () => {
+  //   await User.deleteMany({})
 
-    const passwordHash = await bcrypt.hash('secret', 10)
-    const user = new User({ username: 'root', name: 'me', passwordHash })
+  //   const passwordHash = await bcrypt.hash('secret', 10)
+  //   const user = new User({ username: 'root', name: 'me', passwordHash })
 
-    await user.save()
-  })
+  //   await user.save()
+  // })
 
   test('Creation succeeds with a fresh username', async () => {
     const usersAtStart = await helper.usersInDb()
