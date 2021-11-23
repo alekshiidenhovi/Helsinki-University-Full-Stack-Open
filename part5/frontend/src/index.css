@@ -1,20 +1,16 @@
-h1 {
-  color: green;
-  font-style: italic;
-}
-
-.note {
-  color: grey;
-  padding-top: 3px;
-  font-size: 15px;
-}
-
-.error {
-  color: red;
+.message {
   background: lightgrey;
   font-size: 20px;
   border-style: solid;
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
+}
+
+.success {
+  color: hsl(130, 100%, 28%);
+}
+
+.failure {
+  color: hsl(0, 96%, 44%);
 }
