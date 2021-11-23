@@ -9,7 +9,6 @@ const omit = require('lodash/omit')
 const jwt = require('jsonwebtoken')
 
 let token
-let loggedUser
 beforeEach(async () => {
   // Init users
   await User.deleteMany({})
@@ -35,7 +34,6 @@ beforeEach(async () => {
   )
 
   token = `bearer ${tokenString}`
-  loggedUser = user
 })
 
 describe('GET-request tests:', () => {
@@ -184,15 +182,6 @@ describe('PATCH-request tests:', () => {
 })
 
 describe('User-tests: when there is initially one user in db', () => {
-  // beforeEach(async () => {
-  //   await User.deleteMany({})
-
-  //   const passwordHash = await bcrypt.hash('secret', 10)
-  //   const user = new User({ username: 'root', name: 'me', passwordHash })
-
-  //   await user.save()
-  // })
-
   test('Creation succeeds with a fresh username', async () => {
     const usersAtStart = await helper.usersInDb()
 
