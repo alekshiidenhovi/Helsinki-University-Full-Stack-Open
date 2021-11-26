@@ -86,6 +86,25 @@ const App = () => {
     }
   }
 
+  const updateBlog = async (blog, id) => {
+    try {
+      const newBlog = { 
+        user: blog.user.id,
+        likes: blog.likes, 
+        author: blog.author,
+        title: blog.title,
+        url: blog.url
+      }
+      
+      await blogService.update(newBlog, id)
+      const updatedBlogs = blogs.map(b => b.id === id ? blog : b)
+      setBlogs(updatedBlogs)
+    } catch (exception) {
+      console.error(exception)
+      showMessage('failure', 'Updating a blog failed')
+    }
+  }
+
   return (
     <div>
       <Message message={message} type={type} />
@@ -109,7 +128,7 @@ const App = () => {
           </Togglable>
           
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
           )}
         </div>
       } 
