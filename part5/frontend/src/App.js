@@ -17,9 +17,14 @@ const App = () => {
   const [user, setUser] = useState(null)
 
   const createFormRef = useRef()
+
+  const sortByLikes = arr => arr.sort((first, second) => second.likes - first.likes)
   
   // Fetch blogs
-  useEffect(() => blogService.getAll().then(blogs => setBlogs(blogs)), [])
+  useEffect(() => blogService.getAll().then(blogs => {
+    sortByLikes(blogs)
+    setBlogs(blogs)
+  }), [])
 
   // Fetch user credentials
   useEffect(() => {
@@ -95,9 +100,10 @@ const App = () => {
         title: blog.title,
         url: blog.url
       }
-      
+
       await blogService.update(newBlog, id)
       const updatedBlogs = blogs.map(b => b.id === id ? blog : b)
+      sortByLikes(updatedBlogs)
       setBlogs(updatedBlogs)
     } catch (exception) {
       console.error(exception)
