@@ -19,7 +19,7 @@ const App = () => {
   const createFormRef = useRef()
 
   const sortByLikes = arr => arr.sort((first, second) => second.likes - first.likes)
-  
+
   // Fetch blogs
   useEffect(() => blogService.getAll().then(blogs => {
     sortByLikes(blogs)
@@ -47,7 +47,7 @@ const App = () => {
   const handleLogin = async event => {
     event.preventDefault()
     try {
-      const credentials = {username, password}
+      const credentials = { username, password }
       const newUser = await loginService.login(credentials)
 
       window.localStorage.setItem('loggedUser', JSON.stringify(newUser))
@@ -78,7 +78,7 @@ const App = () => {
   }
 
   const createBlog = async credentials => {
-    const {title, author} = credentials
+    const { title, author } = credentials
     try {
       const blog = await blogService.create(credentials)
 
@@ -93,9 +93,9 @@ const App = () => {
 
   const updateBlog = async (blog, id) => {
     try {
-      const newBlog = { 
+      const newBlog = {
         user: blog.user.id,
-        likes: blog.likes, 
+        likes: blog.likes,
         author: blog.author,
         title: blog.title,
         url: blog.url
@@ -130,12 +130,12 @@ const App = () => {
       <Message message={message} type={type} />
 
       {user === null ?
-        <Login 
+        <Login
           handleLogin={handleLogin}
           username={username}
           setUsername={setUsername}
           password={password}
-          setPassword={setPassword} 
+          setPassword={setPassword}
         /> :
         <div>
           <h2>Blogs</h2>
@@ -146,12 +146,12 @@ const App = () => {
           <Togglable buttonLabel="Create new blog" ref={createFormRef}>
             <CreateForm createBlog={createBlog} />
           </Togglable>
-          
+
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} currentUser={user} />
           )}
         </div>
-      } 
+      }
     </div>
   )
 }

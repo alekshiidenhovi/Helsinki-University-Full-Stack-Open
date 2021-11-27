@@ -14,7 +14,7 @@ const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
     marginBottom: 5
   }
 
-  const updatedLikes = { ...blog, likes: blog.likes + 1}
+  const updatedLikes = { ...blog, likes: blog.likes + 1 }
 
   const addLike = event => {
     event.preventDefault()
@@ -31,15 +31,15 @@ const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
       <div>
         {blog.title} {blog.author} <button onClick={toggleVisibility}>{text()}</button>
       </div>
-      
+
       {visible ?
-      <div>
-        {blog.url} <br />
-        likes {blog.likes} <button onClick={addLike}>like</button> <br />
-        {blog.user.name} <br />
-        {blog.user.username === currentUser.username ? <button onClick={deleteBlog}>remove</button> : null}
-      </div> :
-      null
+        <div>
+          {blog.url} <br />
+          likes {blog.likes} <button onClick={addLike}>like</button> <br />
+          {blog.user.name} <br />
+          {blog.user.username === currentUser.username ? <button onClick={deleteBlog}>remove</button> : null}
+        </div> :
+        null
       }
     </div>
   )
