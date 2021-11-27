@@ -111,6 +111,20 @@ const App = () => {
     }
   }
 
+  const removeBlog = async (blog) => {
+    if (window.confirm(`Do you want to delete "${blog.title}" by ${blog.author}?`)) {
+      try {
+        const id = blog.id
+        await blogService.remove(id)
+        const updatedBlogs = blogs.filter(b => b.id !== id)
+        setBlogs(updatedBlogs)
+      } catch (exception) {
+        console.error(exception)
+        showMessage('failure', 'This user is not allowed to delete this blog')
+      }
+    }
+  }
+
   return (
     <div>
       <Message message={message} type={type} />
@@ -134,7 +148,7 @@ const App = () => {
           </Togglable>
           
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} currentUser={user} />
           )}
         </div>
       } 
