@@ -50,6 +50,6 @@ const CreateForm = ({ createBlog }) => {
       </form>
     </div>
   )
-} 
+}
 
 export default CreateForm
