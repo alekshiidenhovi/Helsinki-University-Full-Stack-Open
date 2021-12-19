@@ -22,6 +22,7 @@ const CreateForm = ({ createBlog }) => {
         <div>
           title
           <input
+            id='title'
             type="title"
             value={title}
             name="title"
@@ -31,6 +32,7 @@ const CreateForm = ({ createBlog }) => {
         <div>
           author
           <input
+            id='author'
             type="author"
             value={author}
             name="author"
@@ -40,6 +42,7 @@ const CreateForm = ({ createBlog }) => {
         <div>
           url
           <input
+            id='url'
             type="url"
             value={url}
             name="url"
