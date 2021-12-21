@@ -35,6 +35,24 @@ describe('Blog app', function() {
 
       // Checks for the red error message
       cy.contains('Wrong username or password').should('have.css', 'color', 'rgb(220, 4, 4)')
+
+    })
+  })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login({ username: 'haleks', password: 'salainen' })
+    })
+
+    it('A blog can be created', function() {
+      cy.contains('Create new blog').click()
+      cy.get('#title').type('Harry Potter')
+      cy.get('#author').type('J. K. Rowling')
+      cy.get('#url').type('http://www.hp.com')
+      cy.get('#create-button').click()
+
+      cy.contains('A new blog "Harry Potter" by J. K. Rowling was created')
+        .should('have.css', 'color', 'rgb(0, 143, 24)')
     })
   })
 })
