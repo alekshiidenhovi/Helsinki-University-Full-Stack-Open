@@ -16,8 +16,6 @@ Cypress.Commands.add('createBlog', ({ title, author, url }) => {
       'Authorization': `bearer ${JSON.parse(localStorage.getItem('loggedUser')).token}`
     }
   })
-
-  cy.visit('http://localhost:3000')
 })
 
 Cypress.Commands.add('checkLikes', ({ url, likes }) => {

@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 describe('Blog app', function() {
   beforeEach(function() {
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
@@ -44,28 +45,37 @@ describe('Blog app', function() {
       cy.login({ username: 'haleks', password: 'salainen' })
     })
 
+    const title = 'Harry Potter'
+    const author = 'J. K. Rowling'
+    const url = 'http://www.hp.com'
+    const blog = { title, author, url }
+
     it('A blog can be created', function() {
       cy.contains('Create new blog').click()
-      cy.get('#title').type('Harry Potter')
-      cy.get('#author').type('J. K. Rowling')
-      cy.get('#url').type('http://www.hp.com')
+      cy.get('#title').type(title)
+      cy.get('#author').type(author)
+      cy.get('#url').type(url)
       cy.get('#create-button').click()
 
-      cy.contains('A new blog "Harry Potter" by J. K. Rowling was created')
+      cy.contains(`A new blog "${title}" by ${author} was created`)
         .should('have.css', 'color', 'rgb(0, 143, 24)')
     })
 
     it('A blog can be liked', function() {
-      cy.createBlog({
-        title: 'Harry Potter',
-        author: 'J. K. Rowling',
-        url: 'http://www.hp.com'
-      })
+      cy.createBlog(blog)
 
-      cy.contains('Harry Potter J. K. Rowling').parent().find('button').click()
-      cy.checkLikes({ url: 'http://www.hp.com', likes: 0 })
-      cy.contains('http://www.hp.com').parent().get('.like-button').click()
-      cy.checkLikes({ url: 'http://www.hp.com', likes: 1 })
+      cy.contains(`${title} ${author}`).parent().find('button').click()
+      cy.checkLikes({ url, likes: 0 })
+      cy.contains(url).parent().get('.like-button').click()
+      cy.checkLikes({ url, likes: 1 })
+    })
+
+    it.only('A blog can be removed', function() {
+      cy.createBlog(blog)
+
+      cy.contains(`${title} ${author}`).parent().find('button').click()
+      cy.get('.remove-button').click()
+      cy.contains(`${title} ${author}`).should('not.exist')
     })
   })
 })
