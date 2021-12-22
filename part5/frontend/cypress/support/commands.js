@@ -19,3 +19,7 @@ Cypress.Commands.add('createBlog', ({ title, author, url }) => {
 
   cy.visit('http://localhost:3000')
 })
+
+Cypress.Commands.add('checkLikes', ({ url, likes }) => {
+  cy.contains(url).parent().contains(`likes ${likes}`)
+})

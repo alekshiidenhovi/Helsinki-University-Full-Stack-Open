@@ -54,5 +54,18 @@ describe('Blog app', function() {
       cy.contains('A new blog "Harry Potter" by J. K. Rowling was created')
         .should('have.css', 'color', 'rgb(0, 143, 24)')
     })
+
+    it('A blog can be liked', function() {
+      cy.createBlog({
+        title: 'Harry Potter',
+        author: 'J. K. Rowling',
+        url: 'http://www.hp.com'
+      })
+
+      cy.contains('Harry Potter J. K. Rowling').parent().find('button').click()
+      cy.checkLikes({ url: 'http://www.hp.com', likes: 0 })
+      cy.contains('http://www.hp.com').parent().get('.like-button').click()
+      cy.checkLikes({ url: 'http://www.hp.com', likes: 1 })
+    })
   })
 })
