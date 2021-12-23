@@ -70,12 +70,43 @@ describe('Blog app', function() {
       cy.checkLikes({ url, likes: 1 })
     })
 
-    it.only('A blog can be removed', function() {
+    it('A blog can be removed', function() {
       cy.createBlog(blog)
 
       cy.contains(`${title} ${author}`).parent().find('button').click()
       cy.get('.remove-button').click()
       cy.contains(`${title} ${author}`).should('not.exist')
+    })
+
+    it.only('Blogs are sorted correctly', function() {
+      const secondBlog = {
+        title: 'Shawshank Redemption',
+        author: 'Stephen King',
+        url: 'http://www.shawshank.com'
+      }
+
+      cy.createBlog(blog)
+      cy.createBlog(secondBlog)
+
+      // Open up extra infos for blogs
+      cy.contains(`${title} ${author}`).parent().find('button').click()
+      cy.contains(`${secondBlog.title} ${secondBlog.author}`).parent().find('button').click()
+
+      // Add a like for Potter
+      cy.contains(url).parent().find('.like-button').click()
+      cy.checkLikes({ url, likes: 1 })
+
+      // Check the order
+      cy.checkTitle({ title })
+
+      // Add two likes for Shawshank
+      cy.contains(secondBlog.url).parent().find('.like-button').click()
+      cy.checkLikes({ url: secondBlog.url, likes: 1 })
+      cy.contains(secondBlog.url).parent().find('.like-button').click()
+      cy.checkLikes({ url: secondBlog.url, likes: 2 })
+
+      // Check the order
+      cy.checkTitle({ title: secondBlog.title })
     })
   })
 })

@@ -21,3 +21,7 @@ Cypress.Commands.add('createBlog', ({ title, author, url }) => {
 Cypress.Commands.add('checkLikes', ({ url, likes }) => {
   cy.contains(url).parent().contains(`likes ${likes}`)
 })
+
+Cypress.Commands.add('checkTitle', ({ title }) => {
+  cy.get('div.basicinfo:first').contains(title)
+})
