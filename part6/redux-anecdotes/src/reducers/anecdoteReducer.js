@@ -8,6 +8,7 @@ const anecdotesAtStart = [
 ]
 
 const getId = () => (100000 * Math.random()).toFixed(0)
+const sortArray = (arr) => arr.sort((a, b) => b.votes - a.votes)
 
 const asObject = (anecdote) => {
   return {
@@ -28,9 +29,9 @@ const reducer = (state = initialState, action) => {
       const id = action.data.id
       const votedAnecdote = state.find(anecdote => anecdote.id === id)
       const changedAnecdote = { ...votedAnecdote, votes: votedAnecdote.votes + 1 }
-      return state.map(anecdote => anecdote.id !== id ? anecdote : changedAnecdote)
+      return sortArray(state.map(anecdote => anecdote.id !== id ? anecdote : changedAnecdote))
     case 'NEW_ANECDOTE':
-      return [...state, action.data]
+      return sortArray([...state, action.data])
     default:
       return state 
   }
