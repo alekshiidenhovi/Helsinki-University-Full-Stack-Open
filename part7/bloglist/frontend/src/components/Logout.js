@@ -12,10 +12,10 @@ const Logout = () => {
       dispatch(userLogout())
       window.localStorage.removeItem('loggedUser')
       blogService.setToken(null)
-      showMessage('SUCCESS', 'Logout successful')
+      dispatch(showMessage('SUCCESS', 'Logout successful'))
     } catch (exception) {
       console.error(exception)
-      showMessage('FAILURE', 'Logout failed')
+      dispatch(showMessage('FAILURE', 'Logout failed'))
     }
   }
 

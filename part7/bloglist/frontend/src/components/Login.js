@@ -29,7 +29,7 @@ const Login = () => {
 
       window.localStorage.setItem('loggedUser', JSON.stringify(newUser))
       blogService.setToken(newUser.token)
-      showMessage('SUCCESS', `${newUser.name} logged in`)
+      dispatch(showMessage('SUCCESS', `${newUser.name} logged in`))
     } catch (exception) {
       console.error(exception)
       showMessage('FAILURE', 'Wrong username or password')

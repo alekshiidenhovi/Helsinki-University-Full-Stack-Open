@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { initBlogs, addBlog, editBlog, deleteBlog } from './reducers/blogReducer'
-import { showMessage } from './reducers/messageReducer'
+import { initBlogs } from './reducers/blogReducer'
 import { userLogin, userLogout } from './reducers/userReducer'
 import Blog from './components/Blog'
 import CreateForm from './components/CreateForm'
@@ -13,11 +12,8 @@ import blogService from './services/blogs'
 
 const App = () => {
   const dispatch = useDispatch()
-  const { blogs: stateBlogs, message: stateMessage, user: stateUser } = useSelector(state => state)
   const createFormRef = useRef()
-
-  const sortByLikes = arr => arr.sort((first, second) => second.likes - first.likes)
-  sortByLikes(stateBlogs)
+  const { blogs: stateBlogs, message: stateMessage, user: stateUser } = useSelector(state => state)
 
   // Fetch blogs and then user credentials
   useEffect(() => dispatch(initBlogs()), [dispatch])
@@ -34,38 +30,8 @@ const App = () => {
     }
   }, [])
 
-  const createBlog = async credentials => {
-    const { title, author } = credentials
-    try {
-      dispatch(addBlog(credentials))
-      showMessage('SUCCESS', `A new blog "${title}" by ${author} was created`)
-      createFormRef.current.toggleVisibility()
-    } catch (exception) {
-      console.error(exception)
-      showMessage('FAILURE', 'Creating a blog failed')
-    }
-  }
-
-  const updateBlog = async blog => {
-    try {
-      const newBlog = { ...blog, user: blog.user.id }
-      dispatch(editBlog(newBlog, blog.id))
-    } catch (exception) {
-      console.error(exception)
-      showMessage('FAILURE', 'Updating a blog failed')
-    }
-  }
-
-  const removeBlog = async (blog) => {
-    if (window.confirm(`Do you want to delete "${blog.title}" by ${blog.author}?`)) {
-      try {
-        dispatch(deleteBlog(blog.id))
-      } catch (exception) {
-        console.error(exception)
-        showMessage('FAILURE', 'This user is not allowed to delete this blog')
-      }
-    }
-  }
+  const sortByLikes = arr => arr.sort((first, second) => second.likes - first.likes)
+  sortByLikes(stateBlogs)
 
   return (
     <div>
@@ -75,17 +41,16 @@ const App = () => {
         <Login /> :
         <div>
           <h2>Blogs</h2>
-
           {stateUser.name} logged in
           <Logout />
 
           <Togglable buttonLabel="Create new blog" ref={createFormRef}>
-            <CreateForm createBlog={createBlog} />
+            <CreateForm formRef={createFormRef} />
           </Togglable>
 
           <div>
             {stateBlogs.map(blog =>
-              <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} currentUser={stateUser} />
+              <Blog key={blog.id} blog={blog} currentUser={stateUser} />
             )}
           </div>
         </div>

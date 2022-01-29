@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { editBlog, deleteBlog } from '../reducers/blogReducer'
+import { showMessage } from '../reducers/messageReducer'
 
-const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
+const Blog = ({ blog, currentUser }) => {
   const [visible, setVisible] = useState(false)
-
-  const toggleVisibility = () => setVisible(!visible)
-  const text = () => visible ? 'hide' : 'view'
+  const dispatch = useDispatch()
 
   const blogStyle = {
     paddingTop: 10,
@@ -14,16 +15,31 @@ const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
     marginBottom: 5
   }
 
+  const toggleVisibility = () => setVisible(!visible)
+  const text = () => visible ? 'hide' : 'view'
   const updatedBlog = { ...blog, likes: blog.likes + 1 }
 
   const addLike = event => {
     event.preventDefault()
-    updateBlog(updatedBlog)
+    try {
+      const newBlog = { ...updatedBlog, user: updatedBlog.user.id }
+      dispatch(editBlog(newBlog, updatedBlog.id))
+    } catch (exception) {
+      console.error(exception)
+      dispatch(showMessage('FAILURE', 'Updating a blog failed'))
+    }
   }
 
-  const deleteBlog = event => {
+  const removeBlog = event => {
     event.preventDefault()
-    removeBlog(blog)
+    if (window.confirm(`Do you want to delete "${blog.title}" by ${blog.author}?`)) {
+      try {
+        dispatch(deleteBlog(blog.id))
+      } catch (exception) {
+        console.error(exception)
+        dispatch(showMessage('FAILURE', 'This user is not allowed to delete this blog'))
+      }
+    }
   }
 
   return (
@@ -37,7 +53,7 @@ const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
           {blog.url} <br />
           likes {blog.likes} <button className="like-button" onClick={addLike}>like</button> <br />
           {blog.user.name} <br />
-          {blog.user.username === currentUser.username ? <button className="remove-button" onClick={deleteBlog}>remove</button> : null}
+          {blog.user.username === currentUser.username ? <button className="remove-button" onClick={removeBlog}>remove</button> : null}
         </div> :
         null
       }
