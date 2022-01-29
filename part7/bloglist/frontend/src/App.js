@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { initBlogs, addBlog, editBlog, deleteBlog } from './reducers/blogReducer'
-import { displayMessage, resetMessage } from './reducers/messageReducer'
+import { showMessage } from './reducers/messageReducer'
+import { userLogin, userLogout } from './reducers/userReducer'
 import Blog from './components/Blog'
 import CreateForm from './components/CreateForm'
 import Login from './components/Login'
@@ -9,73 +10,29 @@ import Logout from './components/Logout'
 import Message from './components/Message'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
-import loginService from './services/login'
 
 const App = () => {
   const dispatch = useDispatch()
-  const { blogs, message } = useSelector(state => state)
-
-  const sortByLikes = arr => arr.sort((first, second) => second.likes - first.likes)
-  sortByLikes(blogs)
-
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-
+  const { blogs: stateBlogs, message: stateMessage, user: stateUser } = useSelector(state => state)
   const createFormRef = useRef()
 
-  // Fetch blogs
-  useEffect(() => dispatch(initBlogs()), [dispatch])
+  const sortByLikes = arr => arr.sort((first, second) => second.likes - first.likes)
+  sortByLikes(stateBlogs)
 
-  // Fetch user credentials
+  // Fetch blogs and then user credentials
+  useEffect(() => dispatch(initBlogs()), [dispatch])
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      dispatch(userLogin(user))
       blogService.setToken(user.token)
+      console.log('Logged in already')
+    } else {
+      dispatch(userLogout())
+      console.log('Logged out')
     }
   }, [])
-
-  const showMessage = (type, text) => {
-    if (type !== null) {
-      dispatch(displayMessage(type, text))
-      setTimeout(() => dispatch(resetMessage()), 5000)
-    }
-  }
-
-  const handleLogin = async event => {
-    event.preventDefault()
-    try {
-      const credentials = { username, password }
-      const newUser = await loginService.login(credentials)
-
-      window.localStorage.setItem('loggedUser', JSON.stringify(newUser))
-      blogService.setToken(newUser.token)
-      setUser(newUser)
-      setUsername('')
-      setPassword('')
-      showMessage('SUCCESS', `${newUser.name} logged in`)
-    } catch (exception) {
-      console.error(exception)
-      showMessage('FAILURE', 'Wrong username or password')
-    }
-  }
-
-  const handleLogout = event => {
-    event.preventDefault()
-    try {
-      window.localStorage.removeItem('loggedUser')
-      blogService.setToken(null)
-      setUser(null)
-      setUsername('')
-      setPassword('')
-      showMessage('SUCCESS', 'Logout successful')
-    } catch (exception) {
-      console.error(exception)
-      showMessage('FAILURE', 'Logout failed')
-    }
-  }
 
   const createBlog = async credentials => {
     const { title, author } = credentials
@@ -112,29 +69,23 @@ const App = () => {
 
   return (
     <div>
-      <Message text={message.text} type={message.type} />
+      <Message text={stateMessage.text} type={stateMessage.type} />
 
-      {user === null ?
-        <Login
-          handleLogin={handleLogin}
-          username={username}
-          setUsername={setUsername}
-          password={password}
-          setPassword={setPassword}
-        /> :
+      {stateUser === null ?
+        <Login /> :
         <div>
           <h2>Blogs</h2>
 
-          {user.name} logged in
-          <Logout handleLogout={handleLogout} />
+          {stateUser.name} logged in
+          <Logout />
 
           <Togglable buttonLabel="Create new blog" ref={createFormRef}>
             <CreateForm createBlog={createBlog} />
           </Togglable>
 
           <div>
-            {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} currentUser={user} />
+            {stateBlogs.map(blog =>
+              <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} currentUser={stateUser} />
             )}
           </div>
         </div>

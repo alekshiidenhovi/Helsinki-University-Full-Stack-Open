@@ -13,13 +13,22 @@ const messageReducer = (state = initialState, action) => {
   }
 }
 
-export const displayMessage = (type, text) => {
+const displayMessage = (type, text) => {
   return { type, text }
 }
 
-export const resetMessage = () => {
+const resetMessage = () => {
   return {
     type: 'RESET'
+  }
+}
+
+export const showMessage = (type, text) => {
+  return async dispatch => {
+    if (type !== null) {
+      dispatch(displayMessage(type, text))
+      setTimeout(() => dispatch(resetMessage()), 5000)
+    }
   }
 }
 
