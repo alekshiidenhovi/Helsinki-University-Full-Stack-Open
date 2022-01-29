@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { initBlogs, addBlog, editBlog, deleteBlog } from './reducers/blogReducer'
+import { displayMessage, resetMessage } from './reducers/messageReducer'
 import Blog from './components/Blog'
 import CreateForm from './components/CreateForm'
 import Login from './components/Login'
@@ -11,14 +12,12 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
-  const sortByLikes = arr => arr.sort((first, second) => second.likes - first.likes)
-
   const dispatch = useDispatch()
-  const blogs = useSelector(state => state.blogs)
+  const { blogs, message } = useSelector(state => state)
+
+  const sortByLikes = arr => arr.sort((first, second) => second.likes - first.likes)
   sortByLikes(blogs)
 
-  const [message, setMessage] = useState('')
-  const [type, setType] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -26,10 +25,6 @@ const App = () => {
   const createFormRef = useRef()
 
   // Fetch blogs
-  // useEffect(() => blogService.getAll().then(blogs => {
-  //   sortByLikes(blogs)
-  //   setBlogs(blogs)
-  // }), [])
   useEffect(() => dispatch(initBlogs()), [dispatch])
 
   // Fetch user credentials
@@ -42,11 +37,10 @@ const App = () => {
     }
   }, [])
 
-  const showMessage = (type, message) => {
+  const showMessage = (type, text) => {
     if (type !== null) {
-      setMessage(message)
-      setType(type)
-      setTimeout(() => setType(null), 5000)
+      dispatch(displayMessage(type, text))
+      setTimeout(() => dispatch(resetMessage()), 5000)
     }
   }
 
@@ -61,10 +55,10 @@ const App = () => {
       setUser(newUser)
       setUsername('')
       setPassword('')
-      showMessage('success', `${newUser.name} logged in`)
+      showMessage('SUCCESS', `${newUser.name} logged in`)
     } catch (exception) {
       console.error(exception)
-      showMessage('failure', 'Wrong username or password')
+      showMessage('FAILURE', 'Wrong username or password')
     }
   }
 
@@ -76,10 +70,10 @@ const App = () => {
       setUser(null)
       setUsername('')
       setPassword('')
-      showMessage('success', 'Logout successful')
+      showMessage('SUCCESS', 'Logout successful')
     } catch (exception) {
       console.error(exception)
-      showMessage('failure', 'Logout failed')
+      showMessage('FAILURE', 'Logout failed')
     }
   }
 
@@ -87,11 +81,11 @@ const App = () => {
     const { title, author } = credentials
     try {
       dispatch(addBlog(credentials))
-      showMessage('success', `A new blog "${title}" by ${author} was created`)
+      showMessage('SUCCESS', `A new blog "${title}" by ${author} was created`)
       createFormRef.current.toggleVisibility()
     } catch (exception) {
       console.error(exception)
-      showMessage('failure', 'Creating a blog failed')
+      showMessage('FAILURE', 'Creating a blog failed')
     }
   }
 
@@ -101,7 +95,7 @@ const App = () => {
       dispatch(editBlog(newBlog, blog.id))
     } catch (exception) {
       console.error(exception)
-      showMessage('failure', 'Updating a blog failed')
+      showMessage('FAILURE', 'Updating a blog failed')
     }
   }
 
@@ -111,14 +105,14 @@ const App = () => {
         dispatch(deleteBlog(blog.id))
       } catch (exception) {
         console.error(exception)
-        showMessage('failure', 'This user is not allowed to delete this blog')
+        showMessage('FAILURE', 'This user is not allowed to delete this blog')
       }
     }
   }
 
   return (
     <div>
-      <Message message={message} type={type} />
+      <Message text={message.text} type={message.type} />
 
       {user === null ?
         <Login

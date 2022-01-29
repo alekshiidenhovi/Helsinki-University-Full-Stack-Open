@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Message = ({ message, type }) => {
+const Message = ({ text, type }) => {
   if (type === null) {
     return null
   }
@@ -9,7 +9,7 @@ const Message = ({ message, type }) => {
 
   return (
     <div className={className}>
-      {message}
+      {text}
     </div>
   )
 }
