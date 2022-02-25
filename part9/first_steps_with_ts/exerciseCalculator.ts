@@ -15,7 +15,7 @@ interface HourInputs {
 
 const parseArguments = (args: Array<string>): HourInputs => {
   if (args.length < 4) throw new Error('Not enough arguments');
-  const [first, second, ...entries] = args
+  const [_first, _second, ...entries] = args
   for (const entry of entries) {
     if (isNaN(Number(entry))) {
       throw new Error('Provided values were not numbers!');
