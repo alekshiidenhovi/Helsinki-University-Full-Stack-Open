@@ -30,7 +30,7 @@ const parseArguments = (args: Array<string>): HourInputs => {
   }; 
 };
 
-const calculateExercises = (hours: Array<number>, target: number): Result => {
+export default function calculateExercises(hours: Array<number>, target: number): Result {
   const periodDays: number = hours.length;
   const totalTrainingHours: number = hours.reduce((acc, hour) => acc + hour, 0);
   const targetHours = periodDays * target;
@@ -45,7 +45,7 @@ const calculateExercises = (hours: Array<number>, target: number): Result => {
     target,
     average: totalTrainingHours / periodDays
   };
-};
+}
 
 
 // Ex 9.2
