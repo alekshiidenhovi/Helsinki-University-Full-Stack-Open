@@ -19,20 +19,20 @@
 
 export default function bmiCalculator(height: number, weight: number) {
   const calculateBmi = (height: number, weight: number): string => {
-    const heightInMeters: number = height / 100
-    const BMI: number = weight / (heightInMeters**2)
+    const heightInMeters: number = height / 100;
+    const BMI: number = weight / (heightInMeters**2);
     if (BMI >= 25) {
-      return "High (overweight)"
+      return "High (overweight)";
     } else if (BMI >= 18.5) {
-      return "Normal (healthy weight)"
+      return "Normal (healthy weight)";
     } else {
-      return "Low (underweight)"
+      return "Low (underweight)";
     }
-  }
+  };
 
-  console.log(`Ex 9.1: ${calculateBmi(180, 74)}`)
+  console.log(`Ex 9.1: ${calculateBmi(180, 74)}`);
 
-  return calculateBmi(height, weight)
+  return calculateBmi(height, weight);
 
   // try {
   //   console.log(`Ex 9.3: ${calculateBmi(height, weight)}`)

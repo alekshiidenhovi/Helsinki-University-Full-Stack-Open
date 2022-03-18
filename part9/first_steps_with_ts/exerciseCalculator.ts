@@ -15,19 +15,20 @@ interface HourInputs {
 
 const parseArguments = (args: Array<string>): HourInputs => {
   if (args.length < 4) throw new Error('Not enough arguments');
-  const [_first, _second, ...entries] = args
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_first, _second, ...entries] = args;
   for (const entry of entries) {
     if (isNaN(Number(entry))) {
       throw new Error('Provided values were not numbers!');
     }
   }
 
-  const [target, ...hours] = entries
+  const [target, ...hours] = entries;
   return {
     target: Number(target),
     hours: hours.map(num => Number(num))
-  } 
-}
+  }; 
+};
 
 const calculateExercises = (hours: Array<number>, target: number): Result => {
   const periodDays: number = hours.length;
@@ -52,10 +53,10 @@ console.log(`Ex 9.2:`, calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
 
 // Ex 9.3
 try {
-  const { target, hours } = parseArguments(process.argv)
-  console.log(`Ex 9.3:`, calculateExercises(hours, target))
+  const { target, hours } = parseArguments(process.argv);
+  console.log(`Ex 9.3:`, calculateExercises(hours, target));
 } catch (error: unknown) {
-  let errorMessage = 'Something bad happened.'
+  let errorMessage = 'Something bad happened.';
   if (error instanceof Error) {
     errorMessage += ' Error: ' + error.message;
   }
