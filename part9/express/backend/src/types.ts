@@ -1,18 +1,23 @@
-type Diagnose = {
+export type Diagnose = {
   code: string,
   name: string,
   latin?: string
 };
 
-type Patient = {
+export enum Gender { 
+  Male = "male",
+  Female = "female",
+  Other = "other"
+}
+
+export type Patient = {
   id: string,
   name: string,
   dateOfBirth: string,
   ssn: string,
-  gender: string, 
+  gender: Gender, 
   occupation: string
 };
 
-type PatientWithoutSSN = Omit<Patient, "ssn">;
-
-export type { Diagnose, Patient, PatientWithoutSSN };
+export type NewPatient = Omit<Patient, "id">;
+export type PatientWithoutSSN = Omit<Patient, "ssn">;
