@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useStateValue, updatePatient } from '../state';
@@ -26,16 +26,35 @@ const PatientPage = () => {
     void fetchCurrentPatient();
   }, [dispatch]);
 
-  const patient = state.patients[`${id}`]
+  const patient = state.patients[`${id}`];
   // console.log(state.patients)
   // console.log(id)
     
   if (patient) {
     return (
       <div>
-        <h2>{patient.name} {patient.gender}</h2>
-        <p>ssn: {patient.ssn}</p>
-        <p>occupation: {patient.occupation}</p>
+        <div>
+          <h2>{patient.name} {patient.gender}</h2>
+          <p>ssn: {patient.ssn}</p>
+          <p>occupation: {patient.occupation}</p>
+        </div>
+        <div>
+        <p>Entries</p>
+        {patient.entries.map((entry, id) => 
+          <div key={id}>
+            <p>{entry.date} <i>{entry.description}</i></p>
+            {entry.diagnosisCodes ?
+            <ul>
+            {entry.diagnosisCodes.map((code, idx) => {
+              return <li key={idx}>{code}</li>;
+            })}
+            </ul> :
+            <></>
+            }
+            
+          </div>
+        )}
+        </div>
       </div>
     );
   } else {
