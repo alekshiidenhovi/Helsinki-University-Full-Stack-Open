@@ -5,6 +5,15 @@ import toNewPatientEntry from '../utils';
 
 const router = express.Router();
 
+router.get('/:id', (req, res) => {
+  const patient = patientService.getPatientById(req.params.id);
+  if (patient) {
+    res.send(patient);
+  } else {
+    throw new Error(`Patient not found`);
+  }
+});
+
 router.get('/', (_req, res) => {
   res.send(patientService.getPatients());
 });

@@ -76,7 +76,7 @@ const toNewPatientEntry = ({ name, dateOfBirth, ssn, gender, occupation } : Fiel
   dateOfBirth: parseDOB(dateOfBirth),
   ssn: parseSSN(ssn),
   gender: parseGender(gender),
-  occupation: parseOccupation(occupation)
+  occupation: parseOccupation(occupation),
 });
 
 export default toNewPatientEntry;
