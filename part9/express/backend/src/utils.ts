@@ -5,7 +5,7 @@ type Fields = {
   dateOfBirth: unknown,
   ssn: unknown,
   gender: unknown, 
-  occupation: unknown,
+  occupation: unknown
 };
 
 const isString = (text: unknown): text is string => {
