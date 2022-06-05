@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NewPatient, Gender } from './types';
 
 type Fields = {
@@ -32,15 +31,15 @@ const parseDOB = (date: unknown): string => {
 const isSSN = (ssn: string): boolean => {
   const firstPart = ssn.substring(0, 6);
   const firstValid = firstPart.split("").every(digit => !isNaN(Number(digit)));
-  console.log(firstPart, firstValid);
+  // console.log(firstPart, firstValid);
 
   const dash = ssn.substring(6, 7); 
   const dashValid = dash === "-";
-  console.log(dash, dashValid);
+  // console.log(dash, dashValid);
 
   const lastPart = ssn.substring(7);
   const lastValid = lastPart.split("").every(alpha => /\w/.test(alpha));
-  console.log(lastPart, lastValid);
+  // console.log(lastPart, lastValid);
 
   return firstValid && dashValid && lastValid;
 };
