@@ -46,7 +46,8 @@ const PatientPage = () => {
             {entry.diagnosisCodes ?
             <ul>
             {entry.diagnosisCodes.map((code, idx) => {
-              return <li key={idx}>{code}</li>;
+              const diagnosis = state.diagnoses[code]?.name;
+              return <li key={idx}>{code} {diagnosis ? diagnosis : ""}</li>;
             })}
             </ul> :
             <></>
