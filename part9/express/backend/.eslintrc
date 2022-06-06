@@ -25,7 +25,6 @@
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "tsconfigRootDir": "./backend",
-    "project": "./tsconfig.json"
+    "project": "./backend/tsconfig.json"
   }
 }

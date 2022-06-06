@@ -1,3 +1,52 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+h2 {
+  margin-bottom: 0.6rem;
+}
+/* 
+html, body {
+  font-size: 62.5%;
+} */
+
+.App {
+  margin-top: 2rem;
+}
+
 .link:link, .link:visited {
   text-decoration: none;
+}
+
+.box {
+  padding: 1rem;
+  border: 1px solid #222;
+  border-radius: 4px;
+}
+
+.patient-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3em;
+}
+
+.patient-info {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  margin-top: 3rem;
+}
+
+.entry-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }

@@ -1,16 +1,16 @@
-{
-  "extends": [
+module.exports = {
+  extends: [
       "eslint:recommended",
       "plugin:@typescript-eslint/recommended",
       "plugin:react/recommended",
-      "plugin:@typescript-eslint/recommended-requiring-type-checking"
+      "plugin:@typescript-eslint/recommended-requiring-type-checking",
   ],
-  "plugins": ["@typescript-eslint", "react"],
-  "env": {
-    "browser": true,
-    "es6": true
+  plugins: ["@typescript-eslint", "react"],
+  env: {
+    browser: true,
+    es6: true
   },
-  "rules": {
+  rules: {
     "@typescript-eslint/semi": ["error"],
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
@@ -23,15 +23,16 @@
     "react/prop-types": 0,
     "react/react-in-jsx-scope": 0
   },
-  "settings": {
-    "react": {
-      "pragma": "React",
-      "version": "detect"
+  settings: {
+    react: {
+      pragma: "React",
+      version: "detect"
     }
   },
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "tsconfigRootDir": "./frontend",
-    "project": "./tsconfig.json"
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    project: "./tsconfig.json",
+    tsconfigRootDir: __dirname,
+    sourceType: "module"
   }
 }

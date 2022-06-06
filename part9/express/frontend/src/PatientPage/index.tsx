@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useStateValue, updatePatient } from '../state';
 import { Patient } from '../types';
 import { apiBaseUrl } from '../constants';
+import PickEntry from '../components/PickEntry';
 
 const PatientPage = () => {
   
@@ -15,9 +16,9 @@ const PatientPage = () => {
     const fetchCurrentPatient = async (): Promise<void> => {
       try {
         const { data: currentPatient } = await axios.get<Patient>(
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           `${apiBaseUrl}/patients/${id}`
         );
-        // setPatient(currentPatient);
         dispatch(updatePatient(currentPatient));
       } catch (e) {
         console.error(e);
@@ -26,35 +27,37 @@ const PatientPage = () => {
     void fetchCurrentPatient();
   }, [dispatch]);
 
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   const patient = state.patients[`${id}`];
   // console.log(state.patients)
   // console.log(id)
     
   if (patient) {
     return (
-      <div>
-        <div>
+      <div className="patient-container">
+        <div className="patient-info">
           <h2>{patient.name} {patient.gender}</h2>
           <p>ssn: {patient.ssn}</p>
           <p>occupation: {patient.occupation}</p>
         </div>
-        <div>
-        <p>Entries</p>
-        {patient.entries.map((entry, id) => 
-          <div key={id}>
-            <p>{entry.date} <i>{entry.description}</i></p>
-            {entry.diagnosisCodes ?
-            <ul>
-            {entry.diagnosisCodes.map((code, idx) => {
-              const diagnosis = state.diagnoses[code]?.name;
-              return <li key={idx}>{code} {diagnosis ? diagnosis : ""}</li>;
-            })}
-            </ul> :
-            <></>
-            }
-            
+        <div className="entry-container">
+          <h2>Entries</h2>
+          <div className="entries">
+            {patient.entries.map((entry, id) => 
+              <div key={id} className="box">
+                <PickEntry entry={entry} />
+                {entry.diagnosisCodes ?
+                  <ul>
+                  {entry.diagnosisCodes.map((code, idx) => {
+                    const diagnosis = state.diagnoses[code]?.name;
+                    return <li key={idx}>{code} {diagnosis ? diagnosis : ""}</li>;
+                  })}
+                  </ul> :
+                  <></>
+                }
+              </div>
+            )}
           </div>
-        )}
         </div>
       </div>
     );
