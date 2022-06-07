@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import patients from '../../data/patients';
-import type { Patient, NewPatient, PublicPatient } from '../types';
+import type { Entry, Patient, NewPatient, PublicPatient } from '../types';
 import { v4 as uuid } from 'uuid';
 
 const getPatientById = (id: string): Patient | undefined => {
@@ -25,7 +25,13 @@ const addNewPatient = ( newPatient: NewPatient ): Patient => {
   return newPatientEntry;
 };
 
-export default { getPatients, getPatientById, addNewPatient };
+const addNewEntry = ( patient: Patient, entry: Entry ): Entry => {
+  const idx = patients.findIndex(obj => obj.id === patient.id);
+  patients[idx].entries.push(entry);
+  return entry;
+};
+
+export default { addNewEntry, getPatients, getPatientById, addNewPatient };
 
 
 

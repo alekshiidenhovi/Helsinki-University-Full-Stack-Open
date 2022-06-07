@@ -1,7 +1,7 @@
 import express from 'express';
 import patientService from '../services/patientService';
-import type { NewPatient } from '../types';
-import toNewPatientEntry from '../utils';
+import type { Entry, NewPatient } from '../types';
+import { toNewPatientEntry, toNewEntry } from '../utils';
 
 const router = express.Router();
 
@@ -11,6 +11,21 @@ router.get('/:id', (req, res) => {
     res.send(patient);
   } else {
     throw new Error(`Patient not found`);
+  }
+});
+
+router.post('/:id/entries', (req, res) => {
+  const patient = patientService.getPatientById(req.params.id);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  const entry: Entry = toNewEntry(req.body);
+
+  if (!patient) {
+    throw new Error(`Patient not found`);
+  } else if (!entry) {
+    throw new Error(`Entry not found`);
+  } else {
+    const newEntry: Entry = patientService.addNewEntry(patient, entry);
+    res.json(newEntry);
   }
 });
 
